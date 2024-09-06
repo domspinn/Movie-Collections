@@ -1,37 +1,29 @@
-const { fetchPopularMovies, searchMovies } = require('../utils/fetchMovies');
+const { fetchPopularMovies, searchMovies, fetchMovieById } = require('../utils/fetchMovies');
 
 const movieResolvers = {
   Query: {
-    // Resolver for fetching popular movies from TMDb API
+    // Fetch popular movies (adjusted to use the OMDb API's search functionality)
     popularMovies: async () => {
-      try {
-        const movies = await fetchPopularMovies();
-        return movies.map(movie => ({
-          id: movie.id,
-          title: movie.title,
-          rating: movie.vote_average,
-          posterPath: movie.poster_path,
-          releaseDate: movie.release_date
-        }));
-      } catch (error) {
-        throw new Error('Failed to fetch popular movies');
-      }
+      const movies = await fetchPopularMovies();
+      return movies.map(movie => ({
+        id: movie.imdbID,
+        title: movie.Title,
+        rating: movie.imdbRating || "N/A",
+        posterPath: movie.Poster,
+        releaseDate: movie.Released || "Unknown"
+      }));
     },
 
-    // Resolver for searching movies from TMDb API
+    // Search movies by title
     searchMovies: async (_, { query }) => {
-      try {
-        const movies = await searchMovies(query);
-        return movies.map(movie => ({
-          id: movie.id,
-          title: movie.title,
-          rating: movie.vote_average,
-          posterPath: movie.poster_path,
-          releaseDate: movie.release_date
-        }));
-      } catch (error) {
-        throw new Error('Failed to search movies');
-      }
+      const movies = await searchMovies(query);
+      return movies.map(movie => ({
+        id: movie.imdbID,
+        title: movie.Title,
+        rating: movie.imdbRating || "N/A",
+        posterPath: movie.Poster,
+        releaseDate: movie.Released || "Unknown"
+      }));
     }
   }
 };
