@@ -1,40 +1,30 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const Movie = require('../models/Movie');
 
 const userResolvers = {
-  Query: {
-    // Resolver to get user's movie collection
-    userCollection: async (_, __, { user }) => {
-      if (!user) {
-        throw new Error('Not authenticated');
-      }
-      const currentUser = await User.findById(user.id).populate('collection');
-      return currentUser.collection;
+  Mutation: {
+    register: async (_, { username, email, password }) => {
+      const user = new User({ username, email, password });
+      await user.save();
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      return { token, user };
+    },
+    login: async (_, { email, password }) => {
+      const user = await User.findOne({ email });
+      if (!user) throw new Error('User not found');
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) throw new Error('Incorrect password');
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      return { token, user };
     }
   },
-
-  Mutation: {
-    // Resolver to add a movie to the user's collection
-    addMovieToCollection: async (_, { movieId, title, rating }, { user }) => {
-      if (!user) {
-        throw new Error('Not authenticated');
-      }
-
-      // Check if the movie already exists in the database
-      let movie = await Movie.findOne({ movieId });
-      if (!movie) {
-        movie = new Movie({ movieId, title, rating });
-        await movie.save();
-      }
-
-      // Add the movie to the user's collection
-      const currentUser = await User.findById(user.id);
-      if (!currentUser.collection.includes(movie._id)) {
-        currentUser.collection.push(movie);
-        await currentUser.save();
-      }
-
-      return movie;
+  Query: {
+    getWatchlist: async (_, __, { user }) => {
+      if (!user) throw new Error('Authentication required');
+      const currentUser = await User.findById(user.id).populate('watchlist');
+      return currentUser.watchlist;
     }
   }
 };

@@ -1,29 +1,42 @@
-const { fetchPopularMovies, searchMovies, fetchMovieById } = require('../utils/fetchMovies');
+const { fetchMovieById, searchMovies } = require('../utils/fetchMovies');
+const Movie = require('../models/Movie');
+const User = require('../models/User');
 
 const movieResolvers = {
   Query: {
-    // Fetch popular movies (adjusted to use the OMDb API's search functionality)
-    popularMovies: async () => {
-      const movies = await fetchPopularMovies();
-      return movies.map(movie => ({
-        id: movie.imdbID,
-        title: movie.Title,
-        rating: movie.imdbRating || "N/A",
-        posterPath: movie.Poster,
-        releaseDate: movie.Released || "Unknown"
-      }));
-    },
-
-    // Search movies by title
     searchMovies: async (_, { query }) => {
       const movies = await searchMovies(query);
       return movies.map(movie => ({
-        id: movie.imdbID,
+        imdbID: movie.imdbID,
         title: movie.Title,
-        rating: movie.imdbRating || "N/A",
+        rating: movie.imdbRating,
         posterPath: movie.Poster,
-        releaseDate: movie.Released || "Unknown"
+        releaseDate: movie.Released
       }));
+    }
+  },
+  Mutation: {
+    addMovieToWatchlist: async (_, { imdbID }, { user }) => {
+      if (!user) throw new Error('Authentication required');
+      const movie = await Movie.findOneAndUpdate(
+        { imdbID },
+        { imdbID },
+        { new: true, upsert: true }
+      );
+      const currentUser = await User.findById(user.id);
+      if (!currentUser.watchlist.includes(movie._id)) {
+        currentUser.watchlist.push(movie._id);
+        await currentUser.save();
+      }
+      return movie;
+    },
+    rateMovie: async (_, { imdbID, rating }, { user }) => {
+      if (!user) throw new Error('Authentication required');
+      const movie = await Movie.findOne({ imdbID });
+      if (!movie) throw new Error('Movie not found');
+      movie.rating = rating;
+      await movie.save();
+      return movie;
     }
   }
 };
