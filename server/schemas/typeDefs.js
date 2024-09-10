@@ -24,26 +24,36 @@ const typeDefs = gql`
     email: String
     collection: [Movie]
     reviews: [Review]
+    watchlist: [Movie]
   }
 
   type Query {
-    # Movie queries
-    popularMovies: [Movie]
+    # Movie Queries
     searchMovies(query: String!): [Movie]
 
-    # User queries
-    userCollection: [Movie]
-
-    # Review queries
+    # Review Queries
     getReviews(movieId: ID!): [Review]
+
+    # User Queries
+    getWatchlist: [Movie]
   }
 
   type Mutation {
-    # User mutations
-    addMovieToCollection(movieId: ID!, title: String!, rating: Float!): Movie
+    # Movie Mutations
+    addMovieToWatchlist(imdbID: ID!): Movie
+    rateMovie(imdbID: ID!, rating: Float!): Movie
 
-    # Review mutations
+    # Review Mutations
     addReview(movieId: ID!, content: String!, rating: Float!): Review
+
+    # User Mutations
+    register(username: String!, email: String!, password: String!): AuthPayload
+    login(email: String!, password: String!): AuthPayload
+  }
+
+  type AuthPayload {
+    token: String
+    user: User
   }
 `;
 
