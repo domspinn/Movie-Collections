@@ -1,6 +1,6 @@
 function Container(props) {
   return (
-    <div className={`container${props.fluid ? '-fluid' : ''}`}>
+    <div className={`custom-container container${props.fluid ? '-fluid' : ''}`}>
       {props.children}
     </div>
   );

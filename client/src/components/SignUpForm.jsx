@@ -4,6 +4,7 @@ import { SIGNUP_USER } from '../utils/mutations';
 const SignUpForm = () => {
   const [formState, setFormState] = useState({ username: '', email: '', password: '' });
   const [signup, { error }] = useMutation(SIGNUP_USER);
+  
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
