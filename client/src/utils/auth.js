@@ -1,31 +1,42 @@
-const { GraphQLError } = require('graphql');
-const jwt = require('jsonwebtoken');
-const secret = 'mysecretssshhhhhhh';
-const expiration = '2h';
-module.exports = {
-  AuthenticationError: new GraphQLError('Could not authenticate user.', {
-    extensions: {
-      code: 'UNAUTHENTICATED',
-    },
-  }),
-  authMiddleware: function ({ req }) {
-    let token = req.body.token || req.query.token || req.headers.authorization;
-    if (req.headers.authorization) {
-      token = token.split(' ').pop().trim();
+import decode from 'jwt-decode';
+
+class AuthService {
+  getProfile() {
+    return decode(this.getToken());
+  }
+
+  loggedIn() {
+    const token = this.getToken();
+    // If there is a token and it's not expired, return `true`
+    return token && !this.isTokenExpired(token) ? true : false;
+  }
+
+  isTokenExpired(token) {
+    // Decode the token to get its expiration time that was set by the server
+    const decoded = decode(token);
+    // If the expiration time is less than the current time (in seconds), the token is expired and we return `true`
+    if (decoded.exp < Date.now() / 1000) {
+      localStorage.removeItem('id_token');
+      return true;
     }
-    if (!token) {
-      return req;
-    }
-    try {
-      const { authenticatedPerson } = jwt.verify(token, secret, { maxAge: expiration });
-      req.user = authenticatedPerson;
-    } catch {
-      console.log('Invalid token');
-    }
-    return req;
-  },
-  signToken: function ({ email, username, _id }) {
-    const payload = { email, username, _id };
-    return jwt.sign({ authenticatedPerson: payload }, secret, { expiresIn: expiration });
-  },
-};
+    // If token hasn't passed its expiration time, return `false`
+    return false;
+  }
+
+  getToken() {
+    return localStorage.getItem('id_token');
+  }
+
+  login(idToken) {
+    localStorage.setItem('id_token', idToken);
+    window.location.assign('home');
+    console.log(window.location)
+  }
+
+  logout() {
+    localStorage.removeItem('id_token');
+    window.location.reload();
+  }
+}
+
+export default new AuthService();

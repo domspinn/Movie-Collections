@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
   type Movie {
-    id: ID!
+    imdbID: String!
     title: String
     rating: Float
     posterPath: String
@@ -19,7 +19,7 @@ const typeDefs = gql`
   }
 
   type User {
-    id: ID!
+    _id: ID!
     username: String
     email: String
     collection: [Movie]
@@ -30,24 +30,20 @@ const typeDefs = gql`
   type Query {
     # Movie Queries
     searchMovies(query: String!): [Movie]
-
-    # Review Queries
     getReviews(movieId: ID!): [Review]
-
-    # User Queries
     getWatchlist: [Movie]
   }
 
   type Mutation {
     # Movie Mutations
-    addMovieToWatchlist(imdbID: ID!): Movie
-    rateMovie(imdbID: ID!, rating: Float!): Movie
+    addMovieToWatchlist(imdbID: String!): Movie
+    rateMovie(imdbID: String!, rating: Float!): Movie
 
     # Review Mutations
     addReview(movieId: ID!, content: String!, rating: Float!): Review
 
     # User Mutations
-    register(username: String!, email: String!, password: String!): AuthPayload
+    addUser(username: String!, email: String!, password: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
   }
 
