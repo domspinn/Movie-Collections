@@ -7,6 +7,8 @@ const { authMiddleware } = require('./utils/auth'); // Ensure you're using the c
 require('dotenv').config();
 const connectDB = require('./config/db');
 
+
+
 // Initialize Express
 const app = express();
 
@@ -27,10 +29,9 @@ async function startServer() {
   // Listen on specified port
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () =>
-    console.log(`Server ready at http://localhost:${PORT}`)
+  console.log(`Server running at http://localhost:${process.env.PORT || 4000}${server.graphqlPath}`)
   );
 }
 
 startServer();
 
-// ${server.graphqlPath}
