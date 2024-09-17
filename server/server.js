@@ -7,6 +7,7 @@ const { authMiddleware } = require('./utils/auth'); // Ensure you're using the c
 require('dotenv').config();
 const connectDB = require('./config/db');
 
+
 // Initialize Express
 const app = express();
 
@@ -23,6 +24,13 @@ const server = new ApolloServer({
 async function startServer() {
   await server.start();
   server.applyMiddleware({ app });
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    });
+  }
 
   // Listen on specified port
   const PORT = process.env.PORT || 4000;
