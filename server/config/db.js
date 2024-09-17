@@ -4,7 +4,7 @@ require('dotenv').config();
 const connectDB = async () => {
   try {
     // Ensure the environment variable is correctly loaded
-    const mongoURI = process.env.MONGODB_URI;
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/movie-collection';
     if (!mongoURI) {
       throw new Error('MONGODB_URI is not defined in environment variables');
     }
