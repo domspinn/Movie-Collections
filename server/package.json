@@ -20,6 +20,7 @@
         "jsonwebtoken": "^8.5.1",
         "connection": "^1.5.0",
         "state": "^0.2.0",
+        "connection-state": "^0.1.0",
         "mongoose": "^8.0.0"
     },
     "devDependencies": {
