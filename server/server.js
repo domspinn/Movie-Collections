@@ -6,6 +6,7 @@ const resolvers = require('./schemas/resolver');
 const { authMiddleware } = require('./utils/auth'); // Ensure you're using the correct middleware function
 require('dotenv').config();
 const connectDB = require('./config/db');
+const path = require('path');
 
 
 // Initialize Express
