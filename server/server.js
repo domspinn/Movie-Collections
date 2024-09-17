@@ -7,18 +7,6 @@ const { authMiddleware } = require('./utils/auth'); // Ensure you're using the c
 require('dotenv').config();
 const connectDB = require('./config/db');
 
-import { connectionState } from 'connection-state'
-
-const connection = connectionState()
-
-console.log(`You are ${connection.getState()}.`)
-// connection.getState() returns 'online' or 'offline'
-
-connection.addListener((state) => {
-	console.log(`Your connection state has changed. You are now ${state}.`)
-})
-
-
 // Initialize Express
 const app = express();
 
