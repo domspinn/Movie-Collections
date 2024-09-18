@@ -135,8 +135,8 @@ const resolvers = {
     // User Queries
     getWatchlist: async (_, __, { user }) => {
       if (!user) throw new Error('Authentication required');
-      const currentUser = await User.findById(user.id).populate('watchlist');
-      return currentUser.watchlist;
+      const currentUser = await User.findById(user.id).populate('watchedList');
+      return currentUser.watchedList;
     },
   },
 
@@ -191,13 +191,6 @@ const resolvers = {
       return review;
     },
 
-    // User Mutations
-    // addUser: async (_, { username, email, password }) => {
-    //   const user = new User({ username, email, password });
-    //   await user.save();
-    //   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    //   return { token, user };
-    // },
     addUser: async (_, { username, email, password }) => {
       const user = new User({ username, email, password });
       await user.save();
