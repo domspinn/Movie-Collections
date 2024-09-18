@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../../utils/queries';
 import Auth from '../../utils/auth';
-import Watchlist from '../../components/Watchlist'; // Import the Watchlist component
+import WatchedList from '../../components/WatchedList'; // Import the Watchlist component
 
 const Profile = () => {
   const { username: userParam } = useParams();
@@ -44,7 +44,7 @@ const Profile = () => {
       {/* Display Watchlist */}
       <div className="col-12 col-md-10 mb-5">
         {user.watchedList && user.watchedList.length > 0 ? (
-          <Watchlist watchedList={user.watchedList} />
+          <WatchedList watchedList={user.watchedList} />
         ) : (
           <p>No movies in your Watched List yet.</p>
         )}
